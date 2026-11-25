@@ -35,12 +35,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${sourceSans.variable} ${sourceSerif.variable} antialiased`}
-      >
-        {children}
-      </body>
+    <html
+      lang="en"
+      className={`${sourceSans.variable} ${sourceSerif.variable}`}
+    >
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

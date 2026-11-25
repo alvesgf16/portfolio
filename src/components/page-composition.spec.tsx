@@ -1,38 +1,28 @@
-import { render } from "@testing-library/react";
+import { render, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import {
-  contactDestination,
-  resumeSections,
-  stickyNavAnchors,
-} from "@/content/page-ia";
-import { resume } from "@/content/resume";
+import { resumeSections, stickyNavAnchors } from "@/content/page-ia";
 
-import { ResumeMain } from "@/components/resume-main";
-import { SiteFooter } from "@/components/site-footer";
-import { StickyNav } from "@/components/sticky-nav";
+import Home from "@/app/page";
 
-describe("page composition", () => {
+describe("home page composition", () => {
   it("mounts every resume section id", () => {
-    const { container } = render(<ResumeMain sections={resumeSections} />);
+    const { container } = render(<Home />);
 
     for (const section of resumeSections) {
       expect(container.querySelector(`#${section.id}`)).not.toBeNull();
     }
   });
 
-  it("resolves every sticky nav href to a destination on the page", () => {
-    const { container } = render(
-      <>
-        <StickyNav anchors={stickyNavAnchors} />
-        <ResumeMain sections={resumeSections} />
-        <SiteFooter id={contactDestination.id} contact={resume.contact} />
-      </>,
-    );
+  it("renders each sticky nav link with its href and a matching destination", () => {
+    const { container } = render(<Home />);
+    const nav = within(container).getByRole("navigation", { name: "Page" });
 
     for (const anchor of stickyNavAnchors) {
-      const destinationId = anchor.href.slice(1);
-      expect(container.querySelector(`#${destinationId}`)).not.toBeNull();
+      const link = within(nav).getByRole("link", { name: anchor.label });
+
+      expect(link).toHaveAttribute("href", anchor.href);
+      expect(container.querySelector(anchor.href)).not.toBeNull();
     }
   });
 });
