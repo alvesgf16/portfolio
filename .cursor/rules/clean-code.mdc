@@ -1,0 +1,67 @@
+---
+description: Clean Code judgment guidance (Meaningful Names through Smells; Unit Tests may live in unit-tests.mdc)
+alwaysApply: true
+---
+
+# Clean Code
+
+Source: Robert C. Martin, _Clean Code_. Inventory: `docs/clean-code-inventory.md`.
+
+## Meaningful Names (Ch.2)
+
+Prefer intention-revealing, searchable, pronounceable names. One word per concept. No Hungarian / type prefixes. Classes are nouns; methods are verbs. Prefer problem-domain vocabulary in feature/domain code; solution-domain (framework) words where they fit.
+
+### Domain vocabulary
+
+- Resume content: `resume`, `intro`, `summary`, `contact`, `experience`, `projects`, `skillGroups`, `education`, `additional`
+- Evidence / IA: `evidenceIds`, `visibleBullets`, `expandedBullets`, section anchors
+- Presentation: hero, lede, timeline, spotlight, sticky nav, badge groups
+- Prefer content field names that match `src/content/resume.ts` over vague `data` / `items` / `info`
+
+## Functions (Ch.3)
+
+Small; do one thing; one abstraction level; stepdown (caller above callee). Prefer 0–2 args; at most 3 positional — more → named argument object type. Avoid flag arguments. No hidden side effects. Command/query separation. Prefer extract to small helpers or section components over growing past size gates (strict on `.ts`; TSX sections may be slightly larger — see inventory exceptions).
+
+## Comments (Ch.4)
+
+Prefer rename/extract over narrative comments. Keep legal, intent, clarification, and warning comments. Ban `FIXME` / `XXX` / `HACK`; temporary `TODO` OK with why. Delete commented-out code.
+
+## Formatting (Ch.5)
+
+Team formatter (Prettier, when installed) is horizontal source of truth. Vertical: newspaper metaphor, single blank between concepts, density within a thought, dependents below callers, conceptual affinity.
+
+## Objects and Data Structures (Ch.6)
+
+Objects hide data behind operations; data structures expose data. Treat `resume` content as a data structure; UI components render it. Avoid hybrids and Active Record on content payloads. Law of Demeter: talk to neighbors — reading resume fields is fine.
+
+## Error Handling (Ch.7)
+
+Prefer exceptions (or idiomatic Result-style outcomes) over error codes for unexpected failures. No empty catches. Provide context. Don’t use throw for expected validation — return a named outcome. Be deliberate with null/optional (e.g. open-ended `end` dates).
+
+## Boundaries (Ch.8)
+
+Wrap third-party APIs behind owned façades when any appear. Features depend on what you control. Static content and `next/font` stay app-owned; do not invent a backend for V1.
+
+## Classes (Ch.10)
+
+Small, cohesive, single responsibility. Prefer functions and typed modules for this resume app unless a class clearly earns its keep.
+
+## Systems (Ch.11)
+
+Separate construction from use. One-way module dependencies: content → UI, not the reverse. Keep the app static and testable.
+
+## Emergence (Ch.12)
+
+Runs all the tests; no duplication; expresses intent; fewest elements that still pass tests and keep SRP.
+
+## Concurrency (Ch.13)
+
+Prefer clear async boundaries. Snapshot when loads can go stale. OS thread material is N/A for this static Next.js site.
+
+## Successive Refinement (Ch.14)
+
+Make it work, then refine with the bar green. Feature branch; no broken main. Commit when the human asks.
+
+## Smells and Heuristics (Ch.17)
+
+Prefer MIT clone/dead-code tooling (unicorn, knip, jscpd). Avoid nested ternaries and lonely ifs when a clearer structure exists. Keep cyclomatic gates under Functions (Ch.3).

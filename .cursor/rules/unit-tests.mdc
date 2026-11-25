@@ -1,0 +1,27 @@
+---
+description: Unit test judgment (FIRST, AAA, harness DSL). Clean Code Ch.9.
+globs: "**/*.{spec,test}.*"
+alwaysApply: false
+---
+
+# Unit Tests (Clean Code Ch.9)
+
+## FIRST
+
+Fast, Independent, Repeatable, Self-validating, Timely.
+
+## AAA
+
+Arrange / Act / Assert. One concept per test. Names say behavior.
+
+## Dual standard
+
+Production size/complexity gates stay strict. Spec and harness files may relax max-lines / complexity / max-classes — keep naming and “no empty catch” discipline.
+
+## Harness / DSL
+
+Put DOM trains, fixture setup, and resume content fixtures in `*.harness.*` (or a `test/fixtures` module) — not inline in every `it`. Prefer `rejects.toThrow` / idiomatic assertion APIs over try/catch for expected failures.
+
+## Coverage
+
+Prefer meaningful tests over chasing percentage alone. Wire coverage in CI when a test runner (Vitest or Jest) is added to this repo.
