@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
+    "start": "serve out",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -13,7 +13,8 @@
     "jscpd": "jscpd --min-lines 5 --min-tokens 50 --ignore \"**/node_modules/**,**/.next/**,**/package-lock.json\" .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run lint && npm run format:check && npm run knip && npm run jscpd && npm test"
+    "check": "npm run lint && npm run format:check && npm run knip && npm run jscpd && npm test",
+    "prepare": "husky"
   },
   "dependencies": {
     "next": "^16.4.6",
@@ -35,11 +36,13 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-simple-import-sort": "^14.0.0",
     "eslint-plugin-unicorn": "^80.0.0",
+    "husky": "^9.1.7",
     "jscpd": "^5.4.3",
     "jsdom": "^31.0.1",
     "knip": "^6.48.0",
     "postcss": "^8.5.33",
     "prettier": "^3.10.1",
+    "serve": "^14.2.8",
     "tailwindcss": "^4.3.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^5.1.2"

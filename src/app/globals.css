@@ -46,7 +46,7 @@
   --color-badge-practices-fg: var(--badge-practices-fg);
   --font-sans: var(--font-source-sans), ui-sans-serif, sans-serif;
   --font-serif: var(--font-source-serif), ui-serif, serif;
-  --max-width-content: var(--content-max-width);
+  --container-content: var(--content-max-width);
   --spacing-page-x: var(--page-padding-x);
   --spacing-page-x-lg: var(--page-padding-x-lg);
   --spacing-section: var(--section-gap);
@@ -56,6 +56,13 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: var(--sticky-nav-height);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {

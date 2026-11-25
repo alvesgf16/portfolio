@@ -30,18 +30,20 @@ Source: Robert C. Martin, _Clean Code_. Portable principles for this Next.js por
 
 ## Stack tooling
 
-| Intent               | Tool                                                                            | Status                                                                                           |
-| -------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Lint entrypoint      | `npm run lint` → `eslint .` / `eslint.config.mjs` (Next 16 removed `next lint`) | Wired (Clean Code + unicorn; ESLint 10)                                                          |
-| Types                | `eslint-config-next/typescript` + `parserOptions.projectService`                | Wired (typed rules: only-throw-error, await-thenable, require-await)                             |
-| Format (Ch.5)        | Prettier + `eslint-config-prettier` + `eslint-plugin-simple-import-sort`        | Wired (`format` / `format:check`; import order blocks via `simple-import-sort/*`)                |
-| Smells (Ch.17)       | `eslint-plugin-unicorn` (MIT)                                                   | Wired in `eslint.config.mjs`                                                                     |
-| Dead code            | `knip`                                                                          | Wired (`npm run knip`; `knip.json`)                                                              |
-| Duplication          | `jscpd`                                                                         | Wired (`npm run jscpd`)                                                                          |
-| Aggregate gate       | `npm run check`                                                                 | lint + format:check + knip + jscpd + test                                                        |
-| Unit tests (Ch.9)    | Vitest + Testing Library                                                        | Wired (`npm test`; `vitest.config.ts`; dual-standard ESLint ready)                               |
-| Boundaries (Ch.8/11) | `no-restricted-imports`                                                         | Wired: `src/content` cannot import UI/app; `src/components` cannot import `@/content` or `@/app` |
-| Avoid                | `eslint-plugin-sonarjs` (LGPL)                                                  | Do not enable                                                                                    |
+| Intent               | Tool                                                                            | Status                                                                            |
+| -------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Lint entrypoint      | `npm run lint` → `eslint .` / `eslint.config.mjs` (Next 16 removed `next lint`) | Wired (Clean Code + unicorn; ESLint 10)                                           |
+| Types                | `eslint-config-next/typescript` + `parserOptions.projectService`                | Wired (typed rules: only-throw-error, await-thenable, require-await)              |
+| Format (Ch.5)        | Prettier + `eslint-config-prettier` + `eslint-plugin-simple-import-sort`        | Wired (`format` / `format:check`; import order blocks via `simple-import-sort/*`) |
+| Smells (Ch.17)       | `eslint-plugin-unicorn` (MIT)                                                   | Wired in `eslint.config.mjs`                                                      |
+| Dead code            | `knip`                                                                          | Wired (`npm run knip`; `knip.json`)                                               |
+| Duplication          | `jscpd`                                                                         | Wired (`npm run jscpd`)                                                           |
+| Aggregate gate       | `npm run check`                                                                 | lint + format:check + knip + jscpd + test                                         |
+| Pre-commit           | Husky                                                                           | Wired (`.husky/pre-commit` → `npm run check`)                                     |
+| CI                   | GitHub Actions (`.github/workflows/ci.yml`)                                     | Wired (`npm run check` + `npm run build` on push/PR)                              |
+| Unit tests (Ch.9)    | Vitest + Testing Library                                                        | Wired (`npm test`; CI runs suite; dual-standard ESLint ready)                     |
+| Boundaries (Ch.8/11) | `no-restricted-imports`                                                         | Wired for `@/` and relative paths between `content` / `components` / `app`        |
+| Avoid                | `eslint-plugin-sonarjs` (LGPL)                                                  | Do not enable                                                                     |
 
 ## Chapter matrix
 

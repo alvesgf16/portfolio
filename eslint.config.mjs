@@ -206,7 +206,20 @@ const eslintConfig = defineConfig([
         {
           patterns: [
             {
-              group: ["@/components", "@/components/*", "@/app", "@/app/*"],
+              group: [
+                "@/components",
+                "@/components/*",
+                "@/app",
+                "@/app/*",
+                "**/components",
+                "**/components/**",
+                "**/app",
+                "**/app/**",
+                "../components",
+                "../components/**",
+                "../app",
+                "../app/**",
+              ],
               message:
                 "Content is a leaf data layer; do not import UI or app routes.",
             },
@@ -225,7 +238,20 @@ const eslintConfig = defineConfig([
         {
           patterns: [
             {
-              group: ["@/content", "@/content/*", "@/app", "@/app/*"],
+              group: [
+                "@/content",
+                "@/content/*",
+                "@/app",
+                "@/app/*",
+                "**/content",
+                "**/content/**",
+                "**/app",
+                "**/app/**",
+                "../content",
+                "../content/**",
+                "../app",
+                "../app/**",
+              ],
               message:
                 "Components must not import content or app; app composes and passes props.",
             },
