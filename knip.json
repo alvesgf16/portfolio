@@ -1,6 +1,9 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/app/**/*.{ts,tsx}"],
+  "entry": ["src/app/**/*.{ts,tsx}", "vitest.config.mts", "vitest.setup.ts"],
   "project": ["**/*.{ts,tsx,js,mjs}"],
-  "ignoreDependencies": ["tailwindcss", "@typescript/native"]
+  "ignoreDependencies": ["tailwindcss"],
+  "vitest": {
+    "config": []
+  }
 }
