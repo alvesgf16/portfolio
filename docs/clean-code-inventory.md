@@ -26,48 +26,47 @@ Source: Robert C. Martin, _Clean Code_. Portable principles for this Next.js por
 - Default: one `.cursor/rules/clean-code.mdc` for judgment (`alwaysApply: true`)
 - Split only for different globs: `unit-tests.mdc` for `**/*.{spec,test}.*`
 - Guide-heavy chapters stay in the rule file — no new ESLint for those alone
-- No import-direction bans until a clear layer map exists (`src/app` UI vs `src/content` data is guide-only for now)
+- Layer map: `src/content` (data/IA) → `src/app` (compose) → `src/components` (UI via props); import-direction bans wired in ESLint
 
 ## Stack tooling
 
-| Intent               | Tool                                                                            | Status                                                               |
-| -------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Lint entrypoint      | `npm run lint` → `eslint .` / `eslint.config.mjs` (Next 16 removed `next lint`) | Wired (Clean Code + unicorn; ESLint 10)                              |
-| Types                | `eslint-config-next/typescript` + `parserOptions.projectService`                | Wired (typed rules: only-throw-error, await-thenable, require-await) |
-| Format (Ch.5)        | Prettier + `eslint-config-prettier`                                             | Wired (`format` / `format:check`)                                    |
-| Smells (Ch.17)       | `eslint-plugin-unicorn` (MIT)                                                   | Wired in `eslint.config.mjs`                                         |
-| Dead code            | `knip`                                                                          | Wired (`npm run knip`; `knip.json`)                                  |
-| Duplication          | `jscpd`                                                                         | Wired (`npm run jscpd`)                                              |
-| Aggregate gate       | `npm run check`                                                                 | lint + format:check + knip + jscpd                                   |
-| Unit tests (Ch.9)    | Vitest or Jest + ESLint plugin                                                  | Not present yet — rule file ready; runner TBD                        |
-| Boundaries (Ch.8/11) | `no-restricted-imports`                                                         | Deferred until folder layers stabilize                               |
-| Avoid                | `eslint-plugin-sonarjs` (LGPL)                                                  | Do not enable                                                        |
+| Intent               | Tool                                                                            | Status                                                                                           |
+| -------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Lint entrypoint      | `npm run lint` → `eslint .` / `eslint.config.mjs` (Next 16 removed `next lint`) | Wired (Clean Code + unicorn; ESLint 10)                                                          |
+| Types                | `eslint-config-next/typescript` + `parserOptions.projectService`                | Wired (typed rules: only-throw-error, await-thenable, require-await)                             |
+| Format (Ch.5)        | Prettier + `eslint-config-prettier` + `eslint-plugin-simple-import-sort`        | Wired (`format` / `format:check`; import order blocks via `simple-import-sort/*`)                |
+| Smells (Ch.17)       | `eslint-plugin-unicorn` (MIT)                                                   | Wired in `eslint.config.mjs`                                                                     |
+| Dead code            | `knip`                                                                          | Wired (`npm run knip`; `knip.json`)                                                              |
+| Duplication          | `jscpd`                                                                         | Wired (`npm run jscpd`)                                                                          |
+| Aggregate gate       | `npm run check`                                                                 | lint + format:check + knip + jscpd + test                                                        |
+| Unit tests (Ch.9)    | Vitest + Testing Library                                                        | Wired (`npm test`; `vitest.config.ts`; dual-standard ESLint ready)                               |
+| Boundaries (Ch.8/11) | `no-restricted-imports`                                                         | Wired: `src/content` cannot import UI/app; `src/components` cannot import `@/content` or `@/app` |
+| Avoid                | `eslint-plugin-sonarjs` (LGPL)                                                  | Do not enable                                                                                    |
 
 ## Chapter matrix
 
-| Ch    | Topic                       | Key principles                                        | Tags                           | Planned checks (this repo)                                                                                                   |
-| ----- | --------------------------- | ----------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| 1     | Clean Code                  | Craft; what clean means here                          | `guide`                        | Judgment in `clean-code.mdc`                                                                                                 |
-| 2     | Meaningful Names            | Intention-revealing; searchable; one word per concept | `automate`, `guide`            | `id-length`, `id-denylist`, `@typescript-eslint/naming-convention` (functions: camelCase or PascalCase for React components) |
-| 3     | Functions                   | Small; one abstraction level; few args; CQS           | `automate`, `guide`            | `complexity` 5, `max-depth` 2, `max-params` 3, `max-lines-per-function` 20 (`.ts`); softer on `.tsx` — see exceptions        |
-| 4     | Comments                    | Why not what; no FIXME/XXX/HACK                       | `automate`, `guide`            | `no-warning-comments` (terms: fixme, xxx, hack); TODO allowed                                                                |
-| 5     | Formatting                  | Newspaper; team formatter                             | `automate`, `guide`            | Prettier + `eslint-config-prettier` last; vertical density guide                                                             |
-| 6     | Objects and Data Structures | Data vs object; LoD; DTOs                             | `guide`                        | Resume content module as data; UI components operate on it                                                                   |
-| 7     | Error Handling              | Exceptions over codes; no empty catch                 | `automate`, `guide`            | `no-empty`, `no-throw-literal`, `prefer-promise-reject-errors`, `@typescript-eslint/only-throw-error`                        |
-| 8     | Boundaries                  | Wrap third-party; owned façade                        | `guide`, `exception-candidate` | Guide until layers clear; then `no-restricted-imports`                                                                       |
-| 9     | Unit Tests                  | FIRST; AAA; dual standard                             | `automate`, `guide`            | `unit-tests.mdc`; runner/plugin when tests land                                                                              |
-| 10    | Classes                     | SRP; small cohesive types                             | `automate`, `guide`            | `max-classes-per-file` 1, `max-lines` 100                                                                                    |
-| 11    | Systems                     | Construction vs use; one-way deps                     | `guide`, `exception-candidate` | Prefer `src/content` → UI one-way; ban reverse when tree exists                                                              |
-| 12    | Emergence                   | Tests; no duplication; intent; fewest elements        | `guide`, `automate`            | `knip` + `jscpd` via `npm run check`                                                                                         |
-| 13    | Concurrency                 | Clear async boundaries                                | `automate`, `guide`            | `@typescript-eslint/await-thenable`, `require-await`                                                                         |
-| 14    | Successive Refinement       | Draft → refine → green → commit                       | `guide`                        | Feature branch; no broken `main`; commit when asked                                                                          |
-| 15–16 | Case studies                | —                                                     | out of scope                   | —                                                                                                                            |
-| 17    | Smells and Heuristics       | G5 duplication; nesting; negated conditions           | `automate`, `guide`            | `no-nested-ternary`, `no-useless-return`, selected `unicorn/*` rules                                                         |
+| Ch    | Topic                       | Key principles                                        | Tags                | Planned checks (this repo)                                                                                                   |
+| ----- | --------------------------- | ----------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1     | Clean Code                  | Craft; what clean means here                          | `guide`             | Judgment in `clean-code.mdc`                                                                                                 |
+| 2     | Meaningful Names            | Intention-revealing; searchable; one word per concept | `automate`, `guide` | `id-length`, `id-denylist`, `@typescript-eslint/naming-convention` (functions: camelCase or PascalCase for React components) |
+| 3     | Functions                   | Small; one abstraction level; few args; CQS           | `automate`, `guide` | `complexity` 5, `max-depth` 2, `max-params` 3, `max-lines-per-function` 20 (`.ts`); softer on `.tsx` — see exceptions        |
+| 4     | Comments                    | Why not what; no FIXME/XXX/HACK                       | `automate`, `guide` | `no-warning-comments` (terms: fixme, xxx, hack); TODO allowed                                                                |
+| 5     | Formatting                  | Newspaper; team formatter                             | `automate`, `guide` | Prettier + `eslint-config-prettier` last; `simple-import-sort` import blocks; vertical density guide                         |
+| 6     | Objects and Data Structures | Data vs object; LoD; DTOs                             | `guide`             | Resume content module as data; app passes slices as props; UI renders them                                                   |
+| 7     | Error Handling              | Exceptions over codes; no empty catch                 | `automate`, `guide` | `no-empty`, `no-throw-literal`, `prefer-promise-reject-errors`, `@typescript-eslint/only-throw-error`                        |
+| 8     | Boundaries                  | Wrap third-party; owned façade                        | `automate`, `guide` | `no-restricted-imports` on `src/content` and `src/components`                                                                |
+| 9     | Unit Tests                  | FIRST; AAA; dual standard                             | `automate`, `guide` | `unit-tests.mdc`; Vitest via `npm test` / `npm run check`                                                                    |
+| 10    | Classes                     | SRP; small cohesive types                             | `automate`, `guide` | `max-classes-per-file` 1, `max-lines` 100                                                                                    |
+| 11    | Systems                     | Construction vs use; one-way deps                     | `automate`, `guide` | `content` → `app` → components (props); ESLint bans content/components reverse edges                                         |
+| 12    | Emergence                   | Tests; no duplication; intent; fewest elements        | `guide`, `automate` | `knip` + `jscpd` via `npm run check`                                                                                         |
+| 13    | Concurrency                 | Clear async boundaries                                | `automate`, `guide` | `@typescript-eslint/await-thenable`, `require-await`                                                                         |
+| 14    | Successive Refinement       | Draft → refine → green → commit                       | `guide`             | Feature branch; no broken `main`; commit when asked                                                                          |
+| 15–16 | Case studies                | —                                                     | out of scope        | —                                                                                                                            |
+| 17    | Smells and Heuristics       | G5 duplication; nesting; negated conditions           | `automate`, `guide` | `no-nested-ternary`, `no-useless-return`, selected `unicorn/*` rules                                                         |
 
 ## Intentional exceptions
 
-| Ch     | Exception                                                 | Principle            | Rationale                                                                                                                                             |
-| ------ | --------------------------------------------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 3      | Softer `max-lines-per-function` / `complexity` on `*.tsx` | Small functions      | Resume section JSX often exceeds book line counts before extract; keep strict on `.ts` helpers/content; extract when a section grows past readability |
-| 8 / 11 | No `no-restricted-imports` yet                            | One-way dependencies | App Router scaffold only; add bans once `src/app` vs `src/content` (and any `src/components`) are stable                                              |
-| 9      | No test runner ESLint plugin yet                          | FIRST / automate     | No Vitest/Jest in repo; enable dual-standard overrides when a runner is chosen                                                                        |
+| Ch  | Exception                                                 | Principle        | Rationale                                                                                                                                             |
+| --- | --------------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3   | Softer `max-lines-per-function` / `complexity` on `*.tsx` | Small functions  | Resume section JSX often exceeds book line counts before extract; keep strict on `.ts` helpers/content; extract when a section grows past readability |
+| 9   | No dedicated ESLint test plugin yet                       | FIRST / automate | Vitest + dual-standard size overrides are wired; add eslint-plugin-vitest only if assertion lint becomes useful                                       |

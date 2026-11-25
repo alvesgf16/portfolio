@@ -2,6 +2,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unicorn from "eslint-plugin-unicorn";
 
 const eslintConfig = defineConfig([
@@ -18,8 +19,26 @@ const eslintConfig = defineConfig([
     },
     plugins: {
       unicorn,
+      "simple-import-sort": simpleImportSort,
     },
     rules: {
+      // Clean Code Ch.5: Import order blocks
+      "simple-import-sort/imports": [
+        "error",
+        {
+          groups: [
+            ["^\\u0000"],
+            ["^node:"],
+            ["^@?\\w"],
+            ["^@/content"],
+            ["^@/components"],
+            ["^@/app"],
+            ["^\\."],
+            ["^.+\\.css$"],
+          ],
+        },
+      ],
+      "simple-import-sort/exports": "error",
       // Clean Code Ch.2: Meaningful Names
       "id-length": [
         "error",
@@ -178,6 +197,44 @@ const eslintConfig = defineConfig([
       "max-classes-per-file": "off",
     },
   },
+  // Clean Code Ch.8/11: content → app → components (one-way)
+  {
+    files: ["src/content/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/components", "@/components/*", "@/app", "@/app/*"],
+              message:
+                "Content is a leaf data layer; do not import UI or app routes.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // Clean Code Ch.8/11: components receive content as props from app
+  {
+    files: ["src/components/**/*.{ts,tsx}"],
+    ignores: ["src/components/**/*.{spec,test,harness}.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/content", "@/content/*", "@/app", "@/app/*"],
+              message:
+                "Components must not import content or app; app composes and passes props.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // Clean Code Ch.5: Prettier wins style conflicts — keep last
   eslintConfigPrettier,
 ]);
