@@ -9,11 +9,11 @@ import { resume } from "@/content/resume";
 
 import { Hero } from "@/components/hero";
 import { PageFrame } from "@/components/page-frame";
-import { ProjectSpotlight } from "@/components/project-spotlight";
+import { ProjectSpotlight } from "@/components/project/project-spotlight";
 import { ResumeMain } from "@/components/resume-main";
 import { SiteFooter } from "@/components/site-footer";
 import { StickyNav } from "@/components/sticky-nav";
-import { SummaryLede } from "@/components/summary-lede";
+import { SummaryLede } from "@/components/summary/summary-lede";
 
 type ResumeSectionId = (typeof resumeSections)[number]["id"];
 
