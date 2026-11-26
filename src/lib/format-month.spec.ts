@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { formatMonth } from "@/lib/format-month";
+
 import type { YearMonth } from "@/types/domain/year-month";
 
 describe("formatMonth", () => {

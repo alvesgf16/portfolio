@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 
 import { resume } from "@/content/resume";
 
-import "./globals.css";
-
 import { documentMetadataFromIntro } from "@/lib/document-metadata";
+
+import "./globals.css";
 
 const sourceSans = localFont({
   src: "./fonts/source-sans-3-latin-wght-normal.woff2",

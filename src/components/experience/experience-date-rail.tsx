@@ -1,4 +1,5 @@
 import { formatMonth } from "@/lib/format-month";
+
 import type { YearMonth } from "@/types/domain/year-month";
 
 type ExperienceDateRailProps = {
