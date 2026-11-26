@@ -19,7 +19,7 @@ type ResumeSectionId = (typeof resumeSections)[number]["id"];
 
 // Every section id needs an entry; `undefined` marks a section still awaiting content.
 const sectionContent = {
-  summary: <SummaryLede />,
+  summary: <SummaryLede summary={resume.summary} />,
   experience: undefined,
   project: <ProjectSpotlight />,
   skills: undefined,
