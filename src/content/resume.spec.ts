@@ -27,8 +27,22 @@ describe("resume content", () => {
     expect(resume.summary.trim()).not.toBe("");
   });
 
+  it("provides experience entries with visible bullets and https links", () => {
+    for (const entry of resume.experience) {
+      expectHttpsUrlWithHost(entry.url);
+      expect(entry.visibleBullets.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("gives every visible bullet an id unique within its entry", () => {
+    for (const entry of resume.experience) {
+      const ids = entry.visibleBullets.map((bullet) => bullet.id);
+
+      expect(new Set(ids).size).toBe(ids.length);
+    }
+  });
+
   it("reserves empty section payloads for later content", () => {
-    expect(resume.experience).toEqual([]);
     expect(resume.projects).toEqual([]);
     expect(resume.skillGroups).toEqual([]);
     expect(resume.education).toEqual([]);
