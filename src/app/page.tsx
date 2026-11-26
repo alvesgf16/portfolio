@@ -9,10 +9,9 @@ import { resume } from "@/content/resume";
 
 import { SiteFooter } from "@/components/contact/site-footer";
 import { Hero } from "@/components/hero/hero";
-import { PageFrame } from "@/components/page-frame";
+import { ResumeMain } from "@/components/layout/resume-main";
+import { StickyNav } from "@/components/layout/sticky-nav";
 import { ProjectSpotlight } from "@/components/project/project-spotlight";
-import { ResumeMain } from "@/components/resume-main";
-import { StickyNav } from "@/components/sticky-nav";
 import { SummaryLede } from "@/components/summary/summary-lede";
 
 type ResumeSectionId = (typeof resumeSections)[number]["id"];
@@ -35,5 +34,17 @@ export default function Home() {
       <ResumeMain sections={resumeSections} sectionContent={sectionContent} />
       <SiteFooter id={contactDestination.id} contact={resume.contact} />
     </PageFrame>
+  );
+}
+
+type PageFrameProps = {
+  children: ReactNode;
+};
+
+function PageFrame({ children }: PageFrameProps) {
+  return (
+    <div className="max-w-content px-page-x md:px-page-x-lg mx-auto">
+      {children}
+    </div>
   );
 }

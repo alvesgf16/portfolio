@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import type { ReactNode } from "react";
 
-import { documentMetadataFromIntro, resume } from "@/content/resume";
+import { resume } from "@/content/resume";
 
 import "./globals.css";
+
+import { documentMetadataFromIntro } from "@/lib/document-metadata";
 
 const sourceSans = localFont({
   src: "./fonts/source-sans-3-latin-wght-normal.woff2",
@@ -32,7 +35,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: ReactNode;
 }>) {
   return (
     <html
