@@ -23,8 +23,11 @@ describe("resume content", () => {
     expectHttpsUrlWithHost(resume.contact.github);
   });
 
+  it("provides a non-empty summary", () => {
+    expect(resume.summary.trim()).not.toBe("");
+  });
+
   it("reserves empty section payloads for later content", () => {
-    expect(resume.summary).toBe("");
     expect(resume.experience).toEqual([]);
     expect(resume.projects).toEqual([]);
     expect(resume.skillGroups).toEqual([]);

@@ -2,6 +2,7 @@ import { render, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { resumeSections, stickyNavAnchors } from "@/content/page-ia";
+import { resume } from "@/content/resume";
 
 import Home from "@/app/page";
 
@@ -12,6 +13,14 @@ describe("home page composition", () => {
     for (const section of resumeSections) {
       expect(container.querySelector(`#${section.id}`)).not.toBeNull();
     }
+  });
+
+  it("renders the summary lede from resume content", () => {
+    const { container } = render(<Home />);
+
+    const lede = container.querySelector("#summary p");
+
+    expect(lede?.textContent).toBe(resume.summary);
   });
 
   it("renders each sticky nav link with its href and a matching destination", () => {
