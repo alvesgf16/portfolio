@@ -18,9 +18,9 @@ describe("home page composition", () => {
   it("renders the summary lede from resume content", () => {
     const { container } = render(<Home />);
 
-    expect(container.querySelector("#summary")).toHaveTextContent(
-      resume.summary,
-    );
+    const lede = container.querySelector("#summary p");
+
+    expect(lede?.textContent).toBe(resume.summary);
   });
 
   it("renders each sticky nav link with its href and a matching destination", () => {

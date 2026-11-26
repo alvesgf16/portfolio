@@ -1,29 +1,26 @@
-import { render, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { SummaryLede } from "@/components/summary-lede";
-
-const summaryText =
-  "Results-driven software developer shipping product features.";
+import {
+  renderSummaryLede,
+  summaryFixture,
+} from "@/components/summary-lede.harness";
 
 describe("SummaryLede", () => {
   it("renders the summary text from props", () => {
-    const { container } = render(<SummaryLede summary={summaryText} />);
+    const paragraph = renderSummaryLede(summaryFixture);
 
-    expect(within(container).getByText(summaryText)).toBeInTheDocument();
+    expect(paragraph.textContent).toBe(summaryFixture);
   });
 
   it("renders the summary as a static paragraph", () => {
-    const { container } = render(<SummaryLede summary={summaryText} />);
+    const paragraph = renderSummaryLede();
 
-    expect(within(container).getByText(summaryText).tagName).toBe("P");
+    expect(paragraph.tagName).toBe("P");
   });
 
   it("applies no motion classes", () => {
-    const { container } = render(<SummaryLede summary={summaryText} />);
+    const paragraph = renderSummaryLede();
 
-    const { className } = within(container).getByText(summaryText);
-
-    expect(className).not.toMatch(/\b(transition|animate)/);
+    expect(paragraph.className).not.toMatch(/\b(transition|animate)/);
   });
 });
