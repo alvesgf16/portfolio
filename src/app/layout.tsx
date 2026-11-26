@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
-import { Source_Sans_3, Source_Serif_4 } from "next/font/google";
+import localFont from "next/font/local";
 
 import { documentMetadataFromIntro, resume } from "@/content/resume";
 
 import "./globals.css";
 
-const sourceSans = Source_Sans_3({
-  subsets: ["latin"],
+const sourceSans = localFont({
+  src: "./fonts/source-sans-3-latin-wght-normal.woff2",
   variable: "--font-source-sans",
-  weight: ["400", "500", "600"],
+  weight: "200 900",
 });
 
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
+const sourceSerif = localFont({
+  src: "./fonts/source-serif-4-latin-wght-normal.woff2",
   variable: "--font-source-serif",
-  weight: ["600"],
+  weight: "200 900",
 });
 
 const documentMetadata = documentMetadataFromIntro(resume.intro);
