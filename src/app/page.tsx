@@ -8,7 +8,7 @@ import {
 import { resume } from "@/content/resume";
 
 import { SiteFooter } from "@/components/contact/site-footer";
-import { Hero } from "@/components/hero";
+import { Hero } from "@/components/hero/hero";
 import { PageFrame } from "@/components/page-frame";
 import { ProjectSpotlight } from "@/components/project/project-spotlight";
 import { ResumeMain } from "@/components/resume-main";
