@@ -18,7 +18,13 @@ export const resume = {
   additional: [],
 } as const;
 
-export function documentMetadataFromIntro(intro: typeof resume.intro) {
+type DocumentIntro = {
+  name: string;
+  title: string;
+  location: string;
+};
+
+export function documentMetadataFromIntro(intro: DocumentIntro) {
   return {
     title: `${intro.name} · ${intro.title}`,
     description: `${intro.title} based in ${intro.location}.`,

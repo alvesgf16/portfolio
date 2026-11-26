@@ -3,7 +3,12 @@ import { describe, expect, it } from "vitest";
 import { documentMetadataFromIntro, resume } from "@/content/resume";
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const httpsUrlPattern = /^https:\/\//;
+function expectHttpsUrlWithHost(value: string) {
+  const url = new URL(value);
+
+  expect(url.protocol).toBe("https:");
+  expect(url.hostname).not.toBe("");
+}
 
 describe("resume content", () => {
   it("keeps intro fields non-empty", () => {
@@ -14,8 +19,8 @@ describe("resume content", () => {
 
   it("exposes usable contact links", () => {
     expect(resume.contact.email).toMatch(emailPattern);
-    expect(resume.contact.linkedin).toMatch(httpsUrlPattern);
-    expect(resume.contact.github).toMatch(httpsUrlPattern);
+    expectHttpsUrlWithHost(resume.contact.linkedin);
+    expectHttpsUrlWithHost(resume.contact.github);
   });
 
   it("reserves empty section payloads for later content", () => {

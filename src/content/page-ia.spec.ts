@@ -25,14 +25,18 @@ describe("page IA", () => {
   });
 
   it("keeps nav labels aligned with section titles except project", () => {
-    for (const section of resumeSections) {
-      if (section.id === "project") {
-        expect(section.navLabel).toBe("Project");
-        expect(section.title).toBe("Selected project");
-        continue;
-      }
+    const alignedSections = resumeSections.filter(
+      (section) => section.id !== "project",
+    );
 
+    for (const section of alignedSections) {
       expect(section.navLabel).toBe(section.title);
     }
+    expect(
+      resumeSections.find((section) => section.id === "project"),
+    ).toMatchObject({
+      navLabel: "Project",
+      title: "Selected project",
+    });
   });
 });

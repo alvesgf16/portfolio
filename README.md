@@ -28,7 +28,7 @@ Typography uses Source Serif 4 (hero) and Source Sans 3 (UI/body) via [`next/fon
 ## Quality gates
 
 - **Pre-commit:** Husky runs `npm run check`
-- **CI:** GitHub Actions runs `npm run check` and `npm run build` on pushes and pull requests
+- **CI:** GitHub Actions runs `npm run check` and `npm run build` on pushes to `main` and on pull requests
 
 ## Learn More
 

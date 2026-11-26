@@ -1,3 +1,4 @@
+import vitest from "@vitest/eslint-plugin";
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
@@ -195,6 +196,16 @@ const eslintConfig = defineConfig([
       "max-lines-per-function": "off",
       "max-lines": "off",
       "max-classes-per-file": "off",
+    },
+  },
+  // Vitest runner rules for spec, test, and harness files
+  {
+    files: ["**/*.{spec,test,harness}.{ts,tsx}"],
+    plugins: {
+      vitest,
+    },
+    rules: {
+      ...vitest.configs.recommended.rules,
     },
   },
   // Clean Code Ch.8/11: content → app → components (one-way)
