@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  # Push runs are limited to main. Pull requests from any branch get CI through `pull_request`.
   push:
     branches: [main]
   pull_request:
