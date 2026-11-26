@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 
 import { resume } from "@/content/resume";
 
-import { expectContactLinks } from "@/components/contact-links.harness";
 import { Hero } from "@/components/hero";
+import { expectContactLinks } from "@/components/shared/contact-links.harness";
 
 describe("Hero", () => {
   it("renders intro and contact from props", () => {

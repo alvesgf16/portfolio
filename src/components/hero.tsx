@@ -1,7 +1,9 @@
-import { type ContactDetails, ContactLinks } from "@/components/contact-links";
 import { HeroFrame } from "@/components/hero-frame";
 import { HeroIntro, type HeroIntroContent } from "@/components/hero-intro";
-import { InlineLinks } from "@/components/inline-links";
+import { ContactLinks } from "@/components/shared/contact-links";
+import { InlineLinks } from "@/components/shared/inline-links";
+
+import type { ContactDetails } from "@/types/domain/contact-details";
 
 type HeroProps = {
   intro: HeroIntroContent;
