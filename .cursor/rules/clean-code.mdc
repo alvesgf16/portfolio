@@ -32,7 +32,7 @@ Team formatter (Prettier, when installed) is horizontal source of truth. Vertica
 
 ## Objects and Data Structures (Ch.6)
 
-Objects hide data behind operations; data structures expose data. Treat `resume` content as a data structure; UI components render it. Avoid hybrids and Active Record on content payloads. Law of Demeter: talk to neighbors — reading resume fields is fine.
+Objects hide data behind operations; data structures expose data. Treat `resume` content as a data structure; app passes slices as props; UI components render them. Avoid hybrids and Active Record on content payloads. Law of Demeter: talk to neighbors — reading prop fields is fine.
 
 ## Error Handling (Ch.7)
 
@@ -48,7 +48,7 @@ Small, cohesive, single responsibility. Prefer functions and typed modules for t
 
 ## Systems (Ch.11)
 
-Separate construction from use. One-way module dependencies: content → UI, not the reverse. Keep the app static and testable.
+Separate construction from use. One-way module dependencies: content → app → components. App imports content and passes it as props; components do not import content. Keep the app static and testable.
 
 ## Emergence (Ch.12)
 

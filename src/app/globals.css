@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+:root {
+  --color-bg: #ffffff;
+  --color-text: #111111;
+  --color-text-muted: #595959;
+  --color-border: #e5e5e5;
+  --color-spotlight-bg: #f7f7f7;
+  --focus-ring: #111111;
+
+  --badge-languages-bg: #d6e4f5;
+  --badge-languages-fg: #1e3a5f;
+  --badge-frontend-bg: #d0edeb;
+  --badge-frontend-fg: #0f4c4a;
+  --badge-backend-bg: #f5e6c8;
+  --badge-backend-fg: #5c3d0a;
+  --badge-platforms-bg: #f5d6e0;
+  --badge-platforms-fg: #5c1a2e;
+  --badge-practices-bg: #e2ebc8;
+  --badge-practices-fg: #2f3d14;
+
+  --content-max-width: 42rem;
+  --page-padding-x: 1.25rem;
+  --page-padding-x-lg: 1.5rem;
+  --section-gap: 2.25rem;
+  --sticky-nav-height: 3rem;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}
+
+@theme inline {
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-spotlight: var(--color-spotlight-bg);
+  --color-badge-languages: var(--badge-languages-bg);
+  --color-badge-languages-fg: var(--badge-languages-fg);
+  --color-badge-frontend: var(--badge-frontend-bg);
+  --color-badge-frontend-fg: var(--badge-frontend-fg);
+  --color-badge-backend: var(--badge-backend-bg);
+  --color-badge-backend-fg: var(--badge-backend-fg);
+  --color-badge-platforms: var(--badge-platforms-bg);
+  --color-badge-platforms-fg: var(--badge-platforms-fg);
+  --color-badge-practices: var(--badge-practices-bg);
+  --color-badge-practices-fg: var(--badge-practices-fg);
+  --font-sans: var(--font-source-sans), ui-sans-serif, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, serif;
+  --container-content: var(--content-max-width);
+  --spacing-page-x: var(--page-padding-x);
+  --spacing-page-x-lg: var(--page-padding-x-lg);
+  --spacing-section: var(--section-gap);
+  --spacing-nav: var(--sticky-nav-height);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: var(--sticky-nav-height);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-source-sans), ui-sans-serif, sans-serif;
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  a {
+    color: inherit;
+    text-underline-offset: 0.15em;
+  }
+}
