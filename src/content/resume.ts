@@ -1,6 +1,6 @@
 import type { Resume } from "@/types/domain/resume";
 
-export const resume = {
+export const resume: Resume = {
   intro: {
     name: "Gabriel Alves",
     title: "Software Developer",
@@ -18,7 +18,7 @@ export const resume = {
   skillGroups: [],
   education: [],
   additional: [],
-} as const satisfies Resume;
+};
 
 type DocumentIntro = {
   name: string;
