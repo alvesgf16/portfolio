@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest";
 
 import { resume } from "@/content/resume";
 
+import { formatMonth } from "@/lib/format-month";
+
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function expectHttpsUrlWithHost(value: string) {
   const url = new URL(value);
 
@@ -21,6 +24,16 @@ describe("resume content", () => {
     expect(resume.contact.email).toMatch(emailPattern);
     expectHttpsUrlWithHost(resume.contact.linkedin);
     expectHttpsUrlWithHost(resume.contact.github);
+  });
+
+  it("formats every experience date as year-month", () => {
+    for (const entry of resume.experience) {
+      const dates = [entry.start, entry.end].filter((date) => date !== null);
+
+      for (const date of dates) {
+        expect(() => formatMonth(date)).not.toThrow();
+      }
+    }
   });
 
   it("provides a non-empty summary", () => {
