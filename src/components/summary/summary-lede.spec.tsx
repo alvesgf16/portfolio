@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   renderSummaryLede,
   summaryFixture,
-} from "@/components/summary-lede.harness";
+} from "@/components/summary/summary-lede.harness";
 
 describe("SummaryLede", () => {
   it("renders the summary text from props", () => {

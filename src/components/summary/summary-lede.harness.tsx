@@ -1,6 +1,6 @@
 import { render, within } from "@testing-library/react";
 
-import { SummaryLede } from "@/components/summary-lede";
+import { SummaryLede } from "@/components/summary/summary-lede";
 
 export const summaryFixture =
   "Results-driven software developer shipping product features.";
