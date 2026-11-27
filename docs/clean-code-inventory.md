@@ -27,7 +27,7 @@ Source: Robert C. Martin, _Clean Code_. Portable principles for this Next.js por
 - Split only for different globs: `unit-tests.mdc` for `**/*.{spec,test}.*`
 - Guide-heavy chapters stay in the rule file — no new ESLint for those alone
 - Layer map, lowest to highest (a layer may import only from layers below it): `src/types/domain` (domain models) → `src/types/ui` (UI contracts) and `src/lib` (helpers) as siblings that never import each other → `src/content` (data/IA) and `src/components` (UI via props) as siblings that never import each other → `src/app` (composition root; imports content and passes slices to components as props); import-direction bans wired in ESLint across production, spec, and harness files
-- Component folders: `src/components/<feature>/` for `layout`, `hero`, `contact`, `experience`, `summary`, and `project`; each folder holds its components plus their colocated specs and harnesses
+- Component folders: `src/components/<feature>/` for `layout`, `hero`, `contact`, `experience`, `summary`, and `project`; each folder holds its components, plus colocated specs and harnesses when present
 - Shared components: `src/components/shared/` holds code used by more than one feature folder; feature folders must not import each other (ESLint-enforced), only `shared`
 
 ## Stack tooling
