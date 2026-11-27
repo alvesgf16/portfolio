@@ -2,7 +2,8 @@
 // components, not both. Nested render callbacks (e.g. `.map(...)`) belong to
 // the enclosing component; nested named components get their own frame.
 
-const COMPONENT_NAME_PATTERN = /^[A-Z]/;
+import { componentNameOf, isComponentName } from "./component-name.mjs";
+
 const INTRINSIC_NAME_PATTERN = /^[a-z]/;
 
 const noMixedJsxElements = {
@@ -37,25 +38,9 @@ const noMixedJsxElements = {
 function enterFunction(frames, node) {
   const name = componentNameOf(node);
 
-  if (name !== undefined && COMPONENT_NAME_PATTERN.test(name)) {
+  if (isComponentName(name)) {
     frames.push({ node, name, intrinsic: new Set(), custom: new Set() });
   }
-}
-
-function componentNameOf(node) {
-  return node.type === "FunctionDeclaration"
-    ? node.id?.name
-    : variableNameOf(node);
-}
-
-function variableNameOf(node) {
-  const { parent } = node;
-
-  if (parent?.type !== "VariableDeclarator" || parent.init !== node) {
-    return undefined;
-  }
-
-  return parent.id.type === "Identifier" ? parent.id.name : undefined;
 }
 
 function exitFunction(context, frames, node) {
@@ -92,15 +77,29 @@ function recordElement(context, frames, node) {
 }
 
 function elementKindOf(nameNode) {
+  if (isFragment(nameNode)) {
+    return null;
+  }
+
   if (nameNode.type === "JSXMemberExpression") {
     return "custom";
   }
 
-  if (nameNode.type !== "JSXIdentifier" || nameNode.name === "Fragment") {
+  if (nameNode.type !== "JSXIdentifier") {
     return null;
   }
 
   return INTRINSIC_NAME_PATTERN.test(nameNode.name) ? "intrinsic" : "custom";
+}
+
+function isFragment(nameNode) {
+  if (nameNode.type === "JSXMemberExpression") {
+    return (
+      nameNode.object.name === "React" && nameNode.property.name === "Fragment"
+    );
+  }
+
+  return nameNode.name === "Fragment";
 }
 
 export default noMixedJsxElements;
