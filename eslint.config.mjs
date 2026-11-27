@@ -22,6 +22,17 @@ const componentFolders = readdirSync(
 
 const sharedComponentFolder = "shared";
 
+// Relative imports are matched as literal text, so every parent depth is listed
+// explicitly. Covers files up to three folders below a feature folder.
+const RELATIVE_DEPTHS = ["../", "../../", "../../../", "../../../../"];
+
+function relativeImportsTo(target) {
+  return RELATIVE_DEPTHS.flatMap((prefix) => [
+    `${prefix}${target}`,
+    `${prefix}${target}/**`,
+  ]);
+}
+
 function layerBan(layers, message) {
   return {
     group: layers.flatMap((layer) => [
@@ -29,8 +40,7 @@ function layerBan(layers, message) {
       `@/${layer}/*`,
       `**/${layer}`,
       `**/${layer}/**`,
-      `../${layer}`,
-      `../${layer}/**`,
+      ...relativeImportsTo(layer),
     ]),
     message,
   };
@@ -45,8 +55,7 @@ function peerFolderBan(folder) {
     group: peers.flatMap((peer) => [
       `@/components/${peer}`,
       `@/components/${peer}/**`,
-      `../${peer}`,
-      `../${peer}/**`,
+      ...relativeImportsTo(peer),
     ]),
     message: `Components/${folder} must not import peer feature folders; move shared code to components/${sharedComponentFolder}.`,
   };
