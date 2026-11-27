@@ -34,6 +34,18 @@ describe("home page composition", () => {
     }
   });
 
+  it("renders the selected project with its visible bullets", () => {
+    const { container } = render(<Home />);
+    const project = container.querySelector("#project");
+    const [selectedProject] = resume.projects;
+
+    expect(project).toHaveTextContent(selectedProject.name);
+
+    for (const bullet of selectedProject.visibleBullets) {
+      expect(project).toHaveTextContent(bullet.text);
+    }
+  });
+
   it("renders each sticky nav link with its href and a matching destination", () => {
     const { container } = render(<Home />);
     const nav = within(container).getByRole("navigation", { name: "Page" });

@@ -17,11 +17,13 @@ import { SummaryLede } from "@/components/summary/summary-lede";
 
 type ResumeSectionId = (typeof resumeSections)[number]["id"];
 
+const [selectedProject] = resume.projects;
+
 // Every section id needs an entry; `undefined` marks a section still awaiting content.
 const sectionContent = {
   summary: <SummaryLede summary={resume.summary} />,
   experience: <ExperienceTimeline entries={resume.experience} />,
-  project: <ProjectSpotlight />,
+  project: selectedProject && <ProjectSpotlight project={selectedProject} />,
   skills: undefined,
   education: undefined,
   additional: undefined,

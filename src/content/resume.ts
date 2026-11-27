@@ -48,7 +48,38 @@ export const resume: Resume = {
       ],
     },
   ],
-  projects: [],
+  projects: [
+    {
+      id: "scuba",
+      name: "Scuba SEAsons",
+      url: "https://www.scubaseasons.com/",
+      start: "2025-01",
+      end: "2025-10",
+      summary:
+        "Contributed to Scuba SEAsons product tooling, including a partner account request management experience for evaluating and processing partner requests against live data.",
+      technologies: [
+        "React",
+        "TypeScript",
+        "Supabase",
+        "Material UI",
+        "CSS preprocessors",
+      ],
+      visibleBullets: [
+        {
+          id: "scuba-request-management",
+          text: "Built a partner account request management system with React and TypeScript, integrating real-time Supabase data into an interactive list, map-based details view, and embedded evaluation form to streamline partner review workflows",
+        },
+        {
+          id: "scuba-responsive-ui",
+          text: "Designed responsive interfaces with Material UI and CSS preprocessors for consistent layouts and themes across devices and browsers",
+        },
+        {
+          id: "scuba-form-tooltips",
+          text: "Improved request-form usability with contextual tooltip guidance on field requirements to reduce submission errors",
+        },
+      ],
+    },
+  ],
   skillGroups: [],
   education: [],
   additional: [],
