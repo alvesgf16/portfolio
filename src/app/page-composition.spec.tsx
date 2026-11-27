@@ -1,7 +1,7 @@
 import { render, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { resumeSections, stickyNavAnchors } from "@/content/page-ia";
+import { resumeSections, stickyNavAnchorsFor } from "@/content/page-ia";
 import { resume } from "@/content/resume";
 
 import Home from "@/app/page";
@@ -34,11 +34,29 @@ describe("home page composition", () => {
     }
   });
 
+  it("renders the selected project with its visible bullets", () => {
+    const { container } = render(<Home />);
+    const project = container.querySelector("#project");
+    const selectedProjects = resume.projects.filter(
+      (candidate) => candidate.id === resume.selectedProjectId,
+    );
+
+    expect(selectedProjects).toHaveLength(1);
+
+    for (const selectedProject of selectedProjects) {
+      expect(project).toHaveTextContent(selectedProject.name);
+
+      for (const bullet of selectedProject.visibleBullets) {
+        expect(project).toHaveTextContent(bullet.text);
+      }
+    }
+  });
+
   it("renders each sticky nav link with its href and a matching destination", () => {
     const { container } = render(<Home />);
     const nav = within(container).getByRole("navigation", { name: "Page" });
 
-    for (const anchor of stickyNavAnchors) {
+    for (const anchor of stickyNavAnchorsFor(resumeSections)) {
       const link = within(nav).getByRole("link", { name: anchor.label });
 
       expect(link).toHaveAttribute("href", anchor.href);

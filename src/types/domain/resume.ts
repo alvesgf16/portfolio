@@ -1,13 +1,8 @@
 import type { ContactDetails } from "@/types/domain/contact-details";
 import type { ExperienceEntry } from "@/types/domain/experience-entry";
 import type { Intro } from "@/types/domain/intro";
+import type { ProjectEntry } from "@/types/domain/project-entry";
 import type { YearMonth } from "@/types/domain/year-month";
-
-type ProjectEntry = {
-  id: string;
-  name: string;
-  summary: string;
-};
 
 type SkillGroup = {
   label: string;
@@ -31,6 +26,7 @@ export type Resume = {
   summary: string;
   experience: readonly ExperienceEntry[];
   projects: readonly ProjectEntry[];
+  selectedProjectId: ProjectEntry["id"];
   skillGroups: readonly SkillGroup[];
   education: readonly EducationEntry[];
   additional: readonly AdditionalEntry[];
