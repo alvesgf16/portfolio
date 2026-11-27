@@ -31,8 +31,16 @@ describe("resume content", () => {
       const dates = [entry.start, entry.end].filter((date) => date !== null);
 
       for (const date of dates) {
-        expect(() => formatMonth(date)).not.toThrow();
+        expect(formatMonth(date).status).toBe("formatted");
       }
+    }
+  });
+
+  it("ends every experience entry on or after its start", () => {
+    for (const entry of resume.experience) {
+      const end = entry.end ?? entry.start;
+
+      expect(end >= entry.start).toBe(true);
     }
   });
 

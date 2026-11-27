@@ -62,6 +62,24 @@ describe("ExperienceTimeline", () => {
     ).toHaveTextContent("Dec 2024");
   });
 
+  it("renders the newest role first", () => {
+    const container = renderExperienceTimeline([
+      experienceFixture,
+      {
+        ...experienceFixture,
+        id: "initech",
+        company: "Initech",
+        start: "2025-06",
+        end: null,
+      },
+    ]);
+    const datetimes = [...container.querySelectorAll("time[datetime]")].map(
+      (time) => time.getAttribute("datetime"),
+    );
+
+    expect(datetimes).toEqual(["2025-06", "2024-01", "2024-12"]);
+  });
+
   it("renders Present for an ongoing role", () => {
     const container = renderExperienceTimeline([
       { ...experienceFixture, end: null },

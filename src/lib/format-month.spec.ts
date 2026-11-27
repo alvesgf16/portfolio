@@ -5,23 +5,34 @@ import type { YearMonth } from "@/types/domain/year-month";
 
 describe("formatMonth", () => {
   it("formats a year-month as abbreviated month and year", () => {
-    expect(formatMonth("2025-10")).toBe("Oct 2025");
+    expect(formatMonth("2025-10")).toEqual({
+      status: "formatted",
+      text: "Oct 2025",
+    });
   });
 
-  it("rejects an out-of-range month at compile time", () => {
+  it("returns an invalid outcome for a month typed as YearMonth but out of range", () => {
     // @ts-expect-error month 13 is outside the YearMonth type
     const outOfRange: YearMonth = "2026-13";
 
-    expect(() => formatMonth(outOfRange)).toThrow();
+    expect(formatMonth(outOfRange)).toEqual({
+      status: "invalid",
+      value: "2026-13",
+    });
   });
 
-  // Malformed values sit outside the YearMonth type on purpose; the runtime guard must still reject them.
-  it.each(["2026-13", "2026-00", "2026-1", "26-01", "2026-01-15", "", "Jan"])(
-    "rejects the malformed value %j",
-    (value) => {
-      expect(() => formatMonth(value as YearMonth)).toThrow(
-        `Invalid year-month "${value}"; expected YYYY-MM.`,
-      );
-    },
-  );
+  // Malformed values and years outside 2000-2199 sit outside the YearMonth type on purpose.
+  it.each([
+    "2026-00",
+    "2026-1",
+    "26-01",
+    "1-01",
+    "1999-01",
+    "2200-01",
+    "2026-01-15",
+    "",
+    "Jan",
+  ])("returns an invalid outcome for %j", (value) => {
+    expect(formatMonth(value)).toEqual({ status: "invalid", value });
+  });
 });

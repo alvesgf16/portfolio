@@ -11,10 +11,16 @@ type ExperienceTimelineProps = {
 export function ExperienceTimeline({ entries }: ExperienceTimelineProps) {
   return (
     <TimelineList>
-      {entries.map((entry) => (
+      {newestFirst(entries).map((entry) => (
         <ExperienceItem key={entry.id} entry={entry} />
       ))}
     </TimelineList>
+  );
+}
+
+function newestFirst(entries: readonly ExperienceEntry[]) {
+  return [...entries].sort((earlier, later) =>
+    later.start.localeCompare(earlier.start),
   );
 }
 

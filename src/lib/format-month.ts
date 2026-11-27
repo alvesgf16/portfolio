@@ -1,6 +1,4 @@
-import type { YearMonth } from "@/types/domain/year-month";
-
-const yearMonthPattern = /^(\d{4})-(0[1-9]|1[0-2])$/;
+const yearMonthPattern = /^(20|21)\d{2}-(0[1-9]|1[0-2])$/;
 
 const monthFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -8,10 +6,16 @@ const monthFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 });
 
-export function formatMonth(yearMonth: YearMonth) {
+type MonthLabel =
+  { status: "formatted"; text: string } | { status: "invalid"; value: string };
+
+export function formatMonth(yearMonth: string): MonthLabel {
   if (!yearMonthPattern.test(yearMonth)) {
-    throw new Error(`Invalid year-month "${yearMonth}"; expected YYYY-MM.`);
+    return { status: "invalid", value: yearMonth };
   }
 
-  return monthFormatter.format(new Date(`${yearMonth}-01T00:00:00Z`));
+  return {
+    status: "formatted",
+    text: monthFormatter.format(new Date(`${yearMonth}-01T00:00:00Z`)),
+  };
 }
