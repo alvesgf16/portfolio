@@ -270,7 +270,7 @@ const eslintConfig = defineConfig([
   // Clean Code Ch.8/11: layer and peer boundaries are checked on resolved file
   // paths, so relative and aliased imports are both covered at any folder depth
   {
-    files: ["**/*.{ts,tsx,jsx}"],
+    files: ["**/*.{js,jsx,ts,tsx}"],
     rules: {
       "import/no-restricted-paths": [
         "error",
@@ -281,7 +281,7 @@ const eslintConfig = defineConfig([
 
   // Clean Code Ch.6/11: a component renders native HTML or custom components, not both
   {
-    files: ["src/app/**/*.{tsx,jsx}", "src/components/**/*.{tsx,jsx}"],
+    files: ["src/app/**/*.{js,jsx,tsx}", "src/components/**/*.{js,jsx,tsx}"],
     ignores: testFileGlobs,
     plugins: {
       local: { rules: { "no-mixed-jsx-elements": noMixedJsxElements } },
