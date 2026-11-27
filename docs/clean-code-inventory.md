@@ -32,20 +32,20 @@ Source: Robert C. Martin, _Clean Code_. Portable principles for this Next.js por
 
 ## Stack tooling
 
-| Intent               | Tool                                                                            | Status                                                                            |
-| -------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| Lint entrypoint      | `npm run lint` → `eslint .` / `eslint.config.mjs` (Next 16 removed `next lint`) | Wired (Clean Code + unicorn; ESLint 10)                                           |
-| Types                | `eslint-config-next/typescript` + `parserOptions.projectService`                | Wired (typed rules: only-throw-error, await-thenable, require-await)              |
-| Format (Ch.5)        | Prettier + `eslint-config-prettier` + `eslint-plugin-simple-import-sort`        | Wired (`format` / `format:check`; import order blocks via `simple-import-sort/*`) |
-| Smells (Ch.17)       | `eslint-plugin-unicorn` (MIT)                                                   | Wired in `eslint.config.mjs`                                                      |
-| Dead code            | `knip`                                                                          | Wired (`npm run knip`; `knip.json`)                                               |
-| Duplication          | `jscpd`                                                                         | Wired (`npm run jscpd`)                                                           |
-| Aggregate gate       | `npm run check`                                                                 | lint + typecheck + format:check + knip + jscpd + test                             |
-| Pre-commit           | Husky                                                                           | Wired (`.husky/pre-commit` → `npm run check`)                                     |
-| CI                   | GitHub Actions (`.github/workflows/ci.yml`)                                     | Wired (`npm run check` + `npm run build` on push/PR)                              |
-| Unit tests (Ch.9)    | Vitest + Testing Library                                                        | Wired (`npm test`; CI runs suite; dual-standard ESLint ready)                     |
-| Boundaries (Ch.8/11) | `no-restricted-imports`                                                         | Wired for `@/` and relative paths between `content` / `components` / `app`        |
-| Avoid                | `eslint-plugin-sonarjs` (LGPL)                                                  | Do not enable                                                                     |
+| Intent               | Tool                                                                            | Status                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Lint entrypoint      | `npm run lint` → `eslint .` / `eslint.config.mjs` (Next 16 removed `next lint`) | Wired (Clean Code + unicorn; ESLint 10)                                                                      |
+| Types                | `eslint-config-next/typescript` + `parserOptions.projectService`                | Wired (typed rules: only-throw-error, await-thenable, require-await)                                         |
+| Format (Ch.5)        | Prettier + `eslint-config-prettier` + `eslint-plugin-simple-import-sort`        | Wired (`format` / `format:check`; import order blocks via `simple-import-sort/*`)                            |
+| Smells (Ch.17)       | `eslint-plugin-unicorn` (MIT)                                                   | Wired in `eslint.config.mjs`                                                                                 |
+| Dead code            | `knip`                                                                          | Wired (`npm run knip`; `knip.json`)                                                                          |
+| Duplication          | `jscpd`                                                                         | Wired (`npm run jscpd`)                                                                                      |
+| Aggregate gate       | `npm run check`                                                                 | lint + typecheck + format:check + knip + jscpd + test                                                        |
+| Pre-commit           | Husky                                                                           | Wired (`.husky/pre-commit` → `npm run check`)                                                                |
+| CI                   | GitHub Actions (`.github/workflows/ci.yml`)                                     | Wired (`npm run check` + `npm run build` on push/PR)                                                         |
+| Unit tests (Ch.9)    | Vitest + Testing Library                                                        | Wired (`npm test`; CI runs suite; dual-standard ESLint ready)                                                |
+| Boundaries (Ch.8/11) | `import/no-restricted-paths`                                                    | Wired on resolved paths for `@/` and relative imports between `types`, `lib`, `content`, `components`, `app` |
+| Avoid                | `eslint-plugin-sonarjs` (LGPL)                                                  | Do not enable                                                                                                |
 
 ## Chapter matrix
 
@@ -58,7 +58,7 @@ Source: Robert C. Martin, _Clean Code_. Portable principles for this Next.js por
 | 5     | Formatting                  | Newspaper; team formatter                             | `automate`, `guide` | Prettier + `eslint-config-prettier` last; `simple-import-sort` import blocks; vertical density guide                                                       |
 | 6     | Objects and Data Structures | Data vs object; LoD; DTOs                             | `automate`, `guide` | `local/no-mixed-jsx-elements` on `src/app/**` and `src/components/**` (each component renders native HTML or composes custom components); content as props |
 | 7     | Error Handling              | Exceptions over codes; no empty catch                 | `automate`, `guide` | `no-empty`, `no-throw-literal`, `prefer-promise-reject-errors`, `@typescript-eslint/only-throw-error`                                                      |
-| 8     | Boundaries                  | Wrap third-party; owned façade                        | `automate`, `guide` | `no-restricted-imports` on `src/content` and `src/components`                                                                                              |
+| 8     | Boundaries                  | Wrap third-party; owned façade                        | `automate`, `guide` | `import/no-restricted-paths` zones on `src/types`, `src/lib`, `src/content`, and `src/components`                                                          |
 | 9     | Unit Tests                  | FIRST; AAA; dual standard                             | `automate`, `guide` | `unit-tests.mdc`; Vitest via `npm test` / `npm run check`                                                                                                  |
 | 10    | Classes                     | SRP; small cohesive types                             | `automate`, `guide` | `max-classes-per-file` 1, `max-lines` 100                                                                                                                  |
 | 11    | Systems                     | Construction vs use; one-way deps                     | `automate`, `guide` | `app` imports `content` and passes props to `components`; ESLint bans content/components importing `app` or each other                                     |
