@@ -19,16 +19,3 @@ export const resume: Resume = {
   education: [],
   additional: [],
 };
-
-type DocumentIntro = {
-  name: string;
-  title: string;
-  location: string;
-};
-
-export function documentMetadataFromIntro(intro: DocumentIntro) {
-  return {
-    title: `${intro.name} · ${intro.title}`,
-    description: `${intro.title} based in ${intro.location}.`,
-  };
-}

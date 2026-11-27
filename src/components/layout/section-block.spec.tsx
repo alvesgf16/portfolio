@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { SectionBlock } from "@/components/section-block";
+import { SectionBlock } from "@/components/layout/section-block";
 
 describe("SectionBlock", () => {
   it("renders children when provided", () => {
