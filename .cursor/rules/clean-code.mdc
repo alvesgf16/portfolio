@@ -48,7 +48,7 @@ Small, cohesive, single responsibility. Prefer functions and typed modules for t
 
 ## Systems (Ch.11)
 
-Separate construction from use. One-way module dependencies: content → app → components. App imports content and passes it as props; components do not import content. Keep the app static and testable.
+Separate construction from use. One-way module dependencies: app sits on top and imports content and components; content and components never import each other or app. Lower layers: `src/types` never imports `src/lib`, `src/content`, `src/components`, or `src/app`; `src/lib` never imports `src/types/ui`, `src/content`, `src/components`, or `src/app`; `src/types/domain` never imports `src/types/ui`. App passes content slices to components as props. Keep the app static and testable.
 
 ## Emergence (Ch.12)
 
