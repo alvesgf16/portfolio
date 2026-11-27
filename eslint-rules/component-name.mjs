@@ -7,7 +7,9 @@ const WRAPPER_NAMES = new Set(["memo", "forwardRef"]);
 
 export function componentNameOf(node) {
   if (node.type === "FunctionDeclaration") {
-    return node.id?.name ?? DEFAULT_EXPORT_NAME;
+    return node.parent?.type === "ExportDefaultDeclaration"
+      ? DEFAULT_EXPORT_NAME
+      : node.id?.name;
   }
 
   return declaredNameOf(wrappedFunctionRoot(node));

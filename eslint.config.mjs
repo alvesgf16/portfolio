@@ -22,47 +22,55 @@ const componentFolders = readdirSync(
 
 const sharedComponentFolder = "shared";
 
-// Relative imports are matched as literal text, so every parent depth is listed
-// explicitly. Covers files up to three folders below a feature folder.
-const RELATIVE_DEPTHS = ["../", "../../", "../../../", "../../../../"];
-
-function relativeImportsTo(target) {
-  return RELATIVE_DEPTHS.flatMap((prefix) => [
-    `${prefix}${target}`,
-    `${prefix}${target}/**`,
-  ]);
+function peerFolderPaths(folder) {
+  return componentFolders
+    .filter((peer) => peer !== folder && peer !== sharedComponentFolder)
+    .map((peer) => `./src/components/${peer}`);
 }
 
-function layerBan(layers, message) {
-  return {
-    group: layers.flatMap((layer) => [
-      `@/${layer}`,
-      `@/${layer}/*`,
-      `**/${layer}`,
-      `**/${layer}/**`,
-      ...relativeImportsTo(layer),
-    ]),
-    message,
-  };
-}
-
-function peerFolderBan(folder) {
-  const peers = componentFolders.filter(
-    (peer) => peer !== folder && peer !== sharedComponentFolder,
-  );
-
-  return {
-    group: peers.flatMap((peer) => [
-      `@/components/${peer}`,
-      `@/components/${peer}/**`,
-      ...relativeImportsTo(peer),
-    ]),
-    message: `Components/${folder} must not import peer feature folders; move shared code to components/${sharedComponentFolder}.`,
-  };
-}
-
-function restrictImports(patterns) {
-  return { "no-restricted-imports": ["error", { patterns }] };
+// Zones are checked against resolved file paths, so a relative import is
+// caught at any depth. `target` folders may not import `from` folders.
+function pathBoundaryZones() {
+  return [
+    {
+      target: "./src/content",
+      from: ["./src/components", "./src/app"],
+      message: "Content is a leaf data layer; do not import UI or app routes.",
+    },
+    {
+      target: "./src/lib",
+      from: [
+        "./src/content",
+        "./src/components",
+        "./src/app",
+        "./src/types/ui",
+      ],
+      message:
+        "Lib is a leaf helper layer; do not import content, UI, UI contracts, or app routes.",
+    },
+    {
+      target: "./src/types",
+      from: ["./src/lib", "./src/content", "./src/components", "./src/app"],
+      message:
+        "Types is the lowest leaf layer; do not import lib, content, UI, or app routes.",
+    },
+    {
+      target: "./src/types/domain",
+      from: ["./src/types/ui"],
+      message: "Domain types must not import UI contracts.",
+    },
+    {
+      target: "./src/components",
+      from: ["./src/content", "./src/app"],
+      message:
+        "Components must not import content or app; app composes and passes props.",
+    },
+    ...componentFolders.map((folder) => ({
+      target: `./src/components/${folder}`,
+      from: peerFolderPaths(folder),
+      message: `Components/${folder} must not import peer feature folders; move shared code to components/${sharedComponentFolder}.`,
+    })),
+  ];
 }
 
 const lintedLineCount = { skipBlankLines: true, skipComments: true };
@@ -259,82 +267,21 @@ const eslintConfig = defineConfig([
       ...vitest.configs.recommended.rules,
     },
   },
-  // Clean Code Ch.8/11: content is a leaf data layer; app composes it into components
+  // Clean Code Ch.8/11: layer and peer boundaries are checked on resolved file
+  // paths, so relative and aliased imports are both covered at any folder depth
   {
-    files: ["src/content/**/*.{ts,tsx}"],
-    rules: restrictImports([
-      layerBan(
-        ["components", "app"],
-        "Content is a leaf data layer; do not import UI or app routes.",
-      ),
-    ]),
+    files: ["**/*.{ts,tsx,jsx}"],
+    rules: {
+      "import/no-restricted-paths": [
+        "error",
+        { basePath: import.meta.dirname, zones: pathBoundaryZones() },
+      ],
+    },
   },
-  // Clean Code Ch.8/11: lib sits below content/app/components; types sits at the bottom
-  {
-    files: ["src/lib/**/*.{ts,tsx}"],
-    rules: restrictImports([
-      layerBan(
-        ["content", "components", "app", "types/ui"],
-        "Lib is a leaf helper layer; do not import content, UI, UI contracts, or app routes.",
-      ),
-    ]),
-  },
-  {
-    files: ["src/types/**/*.{ts,tsx}"],
-    rules: restrictImports([
-      layerBan(
-        ["lib", "content", "components", "app"],
-        "Types is the lowest leaf layer; do not import lib, content, UI, or app routes.",
-      ),
-    ]),
-  },
-  {
-    files: ["src/types/domain/**/*.{ts,tsx}"],
-    rules: restrictImports([
-      layerBan(
-        ["lib", "content", "components", "app"],
-        "Types is the lowest leaf layer; do not import lib, content, UI, or app routes.",
-      ),
-      {
-        group: [
-          "@/types/ui",
-          "@/types/ui/*",
-          "@/types/ui/**",
-          "../ui",
-          "../ui/*",
-          "../ui/**",
-        ],
-        message: "Domain types must not import UI contracts.",
-      },
-    ]),
-  },
-  // Clean Code Ch.8/11: files placed directly under src/components
-  // (outside any feature folder) obey the same layer bans
-  {
-    files: ["src/components/*.{ts,tsx}"],
-    rules: restrictImports([
-      layerBan(
-        ["content", "app"],
-        "Components must not import content or app; app composes and passes props.",
-      ),
-    ]),
-  },
-  // Clean Code Ch.8/11: components receive content as props from app;
-  // feature folders only share code through `shared`
-  ...componentFolders.map((folder) => ({
-    files: [`src/components/${folder}/**/*.{ts,tsx}`],
-    rules: restrictImports([
-      layerBan(
-        ["content", "app"],
-        "Components must not import content or app; app composes and passes props.",
-      ),
-      peerFolderBan(folder),
-    ]),
-  })),
 
   // Clean Code Ch.6/11: a component renders native HTML or custom components, not both
   {
-    files: ["src/app/**/*.tsx", "src/components/**/*.tsx"],
+    files: ["src/app/**/*.{tsx,jsx}", "src/components/**/*.{tsx,jsx}"],
     ignores: testFileGlobs,
     plugins: {
       local: { rules: { "no-mixed-jsx-elements": noMixedJsxElements } },
