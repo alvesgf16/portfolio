@@ -1,3 +1,6 @@
+import { readdirSync } from "node:fs";
+import path from "node:path";
+
 import vitest from "@vitest/eslint-plugin";
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
@@ -5,6 +8,98 @@ import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unicorn from "eslint-plugin-unicorn";
+
+import noMixedJsxElements from "./eslint-rules/no-mixed-jsx-elements.mjs";
+
+const testFileGlobs = ["src/**/*.{spec,test,harness}.{ts,tsx}"];
+
+const componentFolders = readdirSync(
+  path.join(import.meta.dirname, "src/components"),
+  { withFileTypes: true },
+)
+  .filter((entry) => entry.isDirectory())
+  .map((entry) => entry.name);
+
+const sharedComponentFolder = "shared";
+
+function peerFolderPaths(folder) {
+  return componentFolders
+    .filter((peer) => peer !== folder && peer !== sharedComponentFolder)
+    .map((peer) => `./src/components/${peer}`);
+}
+
+// Zones are checked against resolved file paths, so a relative import is
+// caught at any depth. `target` folders may not import `from` folders.
+function pathBoundaryZones() {
+  return [
+    {
+      target: "./src/content",
+      from: ["./src/components", "./src/app"],
+      message: "Content is a leaf data layer; do not import UI or app routes.",
+    },
+    {
+      target: "./src/lib",
+      from: [
+        "./src/content",
+        "./src/components",
+        "./src/app",
+        "./src/types/ui",
+      ],
+      message:
+        "Lib is a leaf helper layer; do not import content, UI, UI contracts, or app routes.",
+    },
+    {
+      target: "./src/types",
+      from: ["./src/lib", "./src/content", "./src/components", "./src/app"],
+      message:
+        "Types is the lowest leaf layer; do not import lib, content, UI, or app routes.",
+    },
+    {
+      target: "./src/types/domain",
+      from: ["./src/types/ui"],
+      message: "Domain types must not import UI contracts.",
+    },
+    {
+      target: "./src/components",
+      from: ["./src/content", "./src/app"],
+      message:
+        "Components must not import content or app; app composes and passes props.",
+    },
+    ...componentFolders.map((folder) => ({
+      target: `./src/components/${folder}`,
+      from: peerFolderPaths(folder),
+      message: `Components/${folder} must not import peer feature folders; move shared code to components/${sharedComponentFolder}.`,
+    })),
+  ];
+}
+
+const lintedLineCount = { skipBlankLines: true, skipComments: true };
+
+// Clean Code rules shared by TypeScript sources and lint rule helpers
+const sharedCleanCodeRules = {
+  // Ch.2: Meaningful Names
+  "id-length": ["error", { min: 2, exceptions: ["_", "i", "j", "k"] }],
+  "id-denylist": ["error", "temp", "tmp", "foo", "bar", "baz", "obj", "arr"],
+  // Ch.3: Functions — book metrics (strict on logic modules)
+  complexity: ["error", 5],
+  "max-depth": ["error", 2],
+  "max-params": ["error", 3],
+  "max-lines-per-function": ["error", { max: 20, ...lintedLineCount }],
+  // Ch.4: Comments — allow TODO; ban stale/urgent markers
+  "no-warning-comments": [
+    "error",
+    { terms: ["fixme", "xxx", "hack"], location: "start" },
+  ],
+  // Ch.10: Classes
+  "max-lines": ["error", { max: 100, ...lintedLineCount }],
+  // Ch.17: Smells — MIT unicorn + core (not LGPL sonarjs)
+  "no-nested-ternary": "error",
+  "no-useless-return": "error",
+  "unicorn/no-lonely-if": "error",
+  "unicorn/no-negated-condition": "error",
+  "unicorn/prefer-array-find": "error",
+  "unicorn/prefer-includes": "error",
+};
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -34,30 +129,16 @@ const eslintConfig = defineConfig([
             ["^@/content"],
             ["^@/components"],
             ["^@/app"],
+            ["^@/lib"],
+            ["^@/types"],
             ["^\\."],
             ["^.+\\.css$"],
           ],
         },
       ],
       "simple-import-sort/exports": "error",
+      ...sharedCleanCodeRules,
       // Clean Code Ch.2: Meaningful Names
-      "id-length": [
-        "error",
-        {
-          min: 2,
-          exceptions: ["_", "i", "j", "k"],
-        },
-      ],
-      "id-denylist": [
-        "error",
-        "temp",
-        "tmp",
-        "foo",
-        "bar",
-        "baz",
-        "obj",
-        "arr",
-      ],
       "@typescript-eslint/naming-convention": [
         "error",
         {
@@ -122,14 +203,7 @@ const eslintConfig = defineConfig([
           format: ["camelCase", "PascalCase", "UPPER_CASE"],
         },
       ],
-      // Clean Code Ch.3: Functions — book metrics (strict on logic modules)
-      complexity: ["error", 5],
-      "max-depth": ["error", 2],
-      "max-params": ["error", 3],
-      "max-lines-per-function": [
-        "error",
-        { max: 20, skipBlankLines: true, skipComments: true },
-      ],
+      // Clean Code Ch.3: Functions — named parameter object types
       "no-restricted-syntax": [
         "error",
         {
@@ -145,11 +219,6 @@ const eslintConfig = defineConfig([
             "Extract this parameter object type to a named type or interface.",
         },
       ],
-      // Clean Code Ch.4: Comments — allow TODO; ban stale/urgent markers
-      "no-warning-comments": [
-        "error",
-        { terms: ["fixme", "xxx", "hack"], location: "start" },
-      ],
       // Clean Code Ch.7 + Ch.13: Error Handling / async
       "no-empty": "error",
       "no-throw-literal": "error",
@@ -159,20 +228,10 @@ const eslintConfig = defineConfig([
       "@typescript-eslint/require-await": "error",
       // Clean Code Ch.10: Classes
       "max-classes-per-file": ["error", 1],
-      "max-lines": [
-        "error",
-        { max: 100, skipBlankLines: true, skipComments: true },
-      ],
-      // Clean Code Ch.17: Smells — MIT unicorn + core (not LGPL sonarjs)
-      "no-nested-ternary": "error",
-      "no-useless-return": "error",
-      "unicorn/no-lonely-if": "error",
-      "unicorn/no-negated-condition": "error",
+      // Clean Code Ch.17: Smells — extra unicorn rules for TypeScript sources
       "unicorn/no-useless-fallback-in-spread": "error",
       "unicorn/no-useless-length-check": "error",
       "unicorn/no-useless-spread": "error",
-      "unicorn/prefer-array-find": "error",
-      "unicorn/prefer-includes": "error",
     },
   },
   // Clean Code Ch.3 exception-candidate: React/Next section JSX
@@ -208,68 +267,37 @@ const eslintConfig = defineConfig([
       ...vitest.configs.recommended.rules,
     },
   },
-  // Clean Code Ch.8/11: content → app → components (one-way)
+  // Clean Code Ch.8/11: layer and peer boundaries are checked on resolved file
+  // paths, so relative and aliased imports are both covered at any folder depth
   {
-    files: ["src/content/**/*.{ts,tsx}"],
+    files: ["**/*.{js,jsx,ts,tsx}"],
     rules: {
-      "no-restricted-imports": [
+      "import/no-restricted-paths": [
         "error",
-        {
-          patterns: [
-            {
-              group: [
-                "@/components",
-                "@/components/*",
-                "@/app",
-                "@/app/*",
-                "**/components",
-                "**/components/**",
-                "**/app",
-                "**/app/**",
-                "../components",
-                "../components/**",
-                "../app",
-                "../app/**",
-              ],
-              message:
-                "Content is a leaf data layer; do not import UI or app routes.",
-            },
-          ],
-        },
+        { basePath: import.meta.dirname, zones: pathBoundaryZones() },
       ],
     },
   },
-  // Clean Code Ch.8/11: components receive content as props from app
+
+  // Clean Code Ch.6/11: a component renders native HTML or custom components, not both
   {
-    files: ["src/components/**/*.{ts,tsx}"],
-    ignores: ["src/components/**/*.{spec,test,harness}.{ts,tsx}"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: [
-                "@/content",
-                "@/content/*",
-                "@/app",
-                "@/app/*",
-                "**/content",
-                "**/content/**",
-                "**/app",
-                "**/app/**",
-                "../content",
-                "../content/**",
-                "../app",
-                "../app/**",
-              ],
-              message:
-                "Components must not import content or app; app composes and passes props.",
-            },
-          ],
-        },
-      ],
+    files: ["src/app/**/*.{js,jsx,tsx}", "src/components/**/*.{js,jsx,tsx}"],
+    ignores: testFileGlobs,
+    plugins: {
+      local: { rules: { "no-mixed-jsx-elements": noMixedJsxElements } },
     },
+    rules: {
+      "local/no-mixed-jsx-elements": "error",
+    },
+  },
+
+  // Clean Code Ch.3/10/17: lint rule helpers follow the same metrics as .ts modules
+  {
+    files: ["eslint-rules/**/*.mjs"],
+    plugins: {
+      unicorn,
+    },
+    rules: sharedCleanCodeRules,
   },
 
   // Clean Code Ch.5: Prettier wins style conflicts — keep last

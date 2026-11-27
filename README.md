@@ -17,13 +17,13 @@ Typography uses Source Serif 4 (hero) and Source Sans 3 (UI/body) via [`next/fon
 
 ## Scripts
 
-| Script          | Purpose                              |
-| --------------- | ------------------------------------ |
-| `npm run dev`   | Local development                    |
-| `npm run build` | Static export to `out/`              |
-| `npm start`     | Serve the static `out/` build        |
-| `npm run check` | Lint, format, knip, jscpd, and tests |
-| `npm test`      | Vitest once                          |
+| Script          | Purpose                                         |
+| --------------- | ----------------------------------------------- |
+| `npm run dev`   | Local development                               |
+| `npm run build` | Static export to `out/`                         |
+| `npm start`     | Serve the static `out/` build                   |
+| `npm run check` | Lint, typecheck, format, knip, jscpd, and tests |
+| `npm test`      | Vitest once                                     |
 
 ## Quality gates
 

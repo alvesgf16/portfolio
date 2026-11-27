@@ -1,5 +1,5 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "$schema": "https://unpkg.com/knip@6/schema.json",
   "entry": ["src/app/**/*.{ts,tsx}", "vitest.config.mts", "vitest.setup.ts"],
   "project": ["**/*.{ts,tsx,js,mjs}"],
   "ignoreDependencies": ["tailwindcss"],
