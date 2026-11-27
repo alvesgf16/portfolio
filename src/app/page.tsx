@@ -8,6 +8,7 @@ import {
 import { resume } from "@/content/resume";
 
 import { SiteFooter } from "@/components/contact/site-footer";
+import { ExperienceTimeline } from "@/components/experience/experience-timeline";
 import { Hero } from "@/components/hero/hero";
 import { ResumeMain } from "@/components/layout/resume-main";
 import { StickyNav } from "@/components/layout/sticky-nav";
@@ -19,7 +20,7 @@ type ResumeSectionId = (typeof resumeSections)[number]["id"];
 // Every section id needs an entry; `undefined` marks a section still awaiting content.
 const sectionContent = {
   summary: <SummaryLede summary={resume.summary} />,
-  experience: undefined,
+  experience: <ExperienceTimeline entries={resume.experience} />,
   project: <ProjectSpotlight />,
   skills: undefined,
   education: undefined,

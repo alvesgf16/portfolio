@@ -23,6 +23,17 @@ describe("home page composition", () => {
     expect(lede?.textContent).toBe(resume.summary);
   });
 
+  it("renders visible experience bullets", () => {
+    const { container } = render(<Home />);
+    const experience = container.querySelector("#experience");
+
+    for (const entry of resume.experience) {
+      for (const bullet of entry.visibleBullets) {
+        expect(experience).toHaveTextContent(bullet.text);
+      }
+    }
+  });
+
   it("renders each sticky nav link with its href and a matching destination", () => {
     const { container } = render(<Home />);
     const nav = within(container).getByRole("navigation", { name: "Page" });
