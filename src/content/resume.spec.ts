@@ -69,6 +69,12 @@ describe("resume content", () => {
     }
   });
 
+  it("selects a project that exists in the projects list", () => {
+    expect(resume.projects.map((project) => project.id)).toContain(
+      resume.selectedProjectId,
+    );
+  });
+
   it("reserves empty section payloads for later content", () => {
     expect(resume.skillGroups).toEqual([]);
     expect(resume.education).toEqual([]);

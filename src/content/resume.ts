@@ -80,6 +80,7 @@ export const resume: Resume = {
       ],
     },
   ],
+  selectedProjectId: "scuba",
   skillGroups: [],
   education: [],
   additional: [],

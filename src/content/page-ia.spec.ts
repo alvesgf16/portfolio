@@ -3,12 +3,16 @@ import { describe, expect, it } from "vitest";
 import {
   contactDestination,
   resumeSections,
-  stickyNavAnchors,
+  stickyNavAnchorsFor,
+  visibleResumeSections,
 } from "@/content/page-ia";
+import { resume } from "@/content/resume";
 
 describe("page IA", () => {
   it("includes every resume section in the sticky nav", () => {
-    const hrefs = stickyNavAnchors.map((anchor) => anchor.href);
+    const hrefs = stickyNavAnchorsFor(resumeSections).map(
+      (anchor) => anchor.href,
+    );
 
     for (const section of resumeSections) {
       expect(hrefs).toContain(`#${section.id}`);
@@ -16,7 +20,7 @@ describe("page IA", () => {
   });
 
   it("ends with the contact destination after resume sections", () => {
-    const lastAnchor = stickyNavAnchors.at(-1);
+    const lastAnchor = stickyNavAnchorsFor(resumeSections).at(-1);
 
     expect(lastAnchor).toEqual({
       href: `#${contactDestination.id}`,
@@ -38,5 +42,19 @@ describe("page IA", () => {
       navLabel: "Project",
       title: "Selected project",
     });
+  });
+
+  it("keeps every section when a project is selected", () => {
+    const [selectedProject] = resume.projects;
+
+    expect(visibleResumeSections(selectedProject)).toEqual(resumeSections);
+  });
+
+  it("drops the project section and its nav link without a selected project", () => {
+    const sections = visibleResumeSections(undefined);
+    const hrefs = stickyNavAnchorsFor(sections).map((anchor) => anchor.href);
+
+    expect(sections.map((section) => section.id)).not.toContain("project");
+    expect(hrefs).not.toContain("#project");
   });
 });

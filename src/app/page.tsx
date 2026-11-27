@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 import {
   contactDestination,
   resumeSections,
-  stickyNavAnchors,
+  stickyNavAnchorsFor,
+  visibleResumeSections,
 } from "@/content/page-ia";
 import { resume } from "@/content/resume";
 
@@ -17,7 +18,11 @@ import { SummaryLede } from "@/components/summary/summary-lede";
 
 type ResumeSectionId = (typeof resumeSections)[number]["id"];
 
-const [selectedProject] = resume.projects;
+const selectedProject = resume.projects.find(
+  (project) => project.id === resume.selectedProjectId,
+);
+const sections = visibleResumeSections(selectedProject);
+const anchors = stickyNavAnchorsFor(sections);
 
 // Every section id needs an entry; `undefined` marks a section still awaiting content.
 const sectionContent = {
@@ -32,9 +37,9 @@ const sectionContent = {
 export default function Home() {
   return (
     <PageFrame>
-      <StickyNav anchors={stickyNavAnchors} />
+      <StickyNav anchors={anchors} />
       <Hero intro={resume.intro} contact={resume.contact} />
-      <ResumeMain sections={resumeSections} sectionContent={sectionContent} />
+      <ResumeMain sections={sections} sectionContent={sectionContent} />
       <SiteFooter id={contactDestination.id} contact={resume.contact} />
     </PageFrame>
   );

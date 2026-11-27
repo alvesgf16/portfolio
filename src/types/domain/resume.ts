@@ -26,6 +26,7 @@ export type Resume = {
   summary: string;
   experience: readonly ExperienceEntry[];
   projects: readonly ProjectEntry[];
+  selectedProjectId: ProjectEntry["id"];
   skillGroups: readonly SkillGroup[];
   education: readonly EducationEntry[];
   additional: readonly AdditionalEntry[];
