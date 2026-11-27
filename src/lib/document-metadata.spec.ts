@@ -15,4 +15,17 @@ describe("documentMetadataFromIntro", () => {
       description: "Engineer based in London, UK.",
     });
   });
+
+  it("builds metadata from a different introduction", () => {
+    const intro = {
+      name: "Grace Hopper",
+      title: "Rear Admiral",
+      location: "Arlington, VA",
+    };
+
+    expect(documentMetadataFromIntro(intro)).toEqual({
+      title: "Grace Hopper · Rear Admiral",
+      description: "Rear Admiral based in Arlington, VA.",
+    });
+  });
 });
