@@ -27,6 +27,10 @@ describe("resume content", () => {
     expect(resume.summary.trim()).not.toBe("");
   });
 
+  it("includes at least one experience entry", () => {
+    expect(resume.experience.length).toBeGreaterThan(0);
+  });
+
   it("provides experience entries with visible bullets and https links", () => {
     for (const entry of resume.experience) {
       expectHttpsUrlWithHost(entry.url);
